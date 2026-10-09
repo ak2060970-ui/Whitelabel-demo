@@ -1,0 +1,1237 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SimpleFloww Interactive Demo — Business Panel & Reseller SuperAdmin</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary: {
+              DEFAULT: '#007BFF',
+              dark: '#0056b3',
+              light: '#3395ff',
+              50: '#eff6ff',
+              100: '#dbeafe',
+              500: '#007BFF',
+              600: '#1269ec',
+              700: '#1d4ed8'
+            },
+            admin: {
+              bg: '#080808',
+              card: '#0c0c0c',
+              border: '#1a1a1a',
+              accent: '#007BFF'
+            },
+            whatsapp: {
+              DEFAULT: '#25D366',
+              dark: '#128C7E',
+              teal: '#075E54',
+              chatBg: '#efeae2',
+              chatDarkBg: '#0b141a',
+              bubbleMe: '#d9fdd3',
+              bubbleOther: '#ffffff'
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Menlo', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* Industrial grid styling matching SimpleFloww /admin */
+    .bg-grid {
+      background-image: 
+        linear-gradient(to right, rgba(0, 123, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 123, 255, 0.08) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+    .industrial-corner {
+      position: relative;
+    }
+    .industrial-corner::after {
+      content: '';
+      position: absolute;
+      top: -1px;
+      left: -1px;
+      width: 12px;
+      height: 12px;
+      border-top: 2px solid #007BFF;
+      border-left: 2px solid #007BFF;
+    }
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    .dark ::-webkit-scrollbar-thumb {
+      background: #334155;
+    }
+  </style>
+</head>
+<body class="h-full bg-slate-50 text-slate-900 font-sans antialiased overflow-hidden select-none">
+
+  <!-- ================= TOP DEMO CONTROLLER BAR ================= -->
+  <div class="h-14 bg-slate-950 border-b border-slate-800 text-white px-4 flex items-center justify-between z-50 relative shrink-0">
+    <div class="flex items-center gap-3">
+      <!-- SimpleFloww Logo Badge -->
+      <a href="index.html" class="flex items-center gap-2 group" title="Return to Landing Page">
+        <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-primary-700 to-primary flex items-center justify-center font-black text-white text-xs shadow-md shadow-primary/30">
+          SF
+        </div>
+        <div class="hidden sm:block">
+          <div class="font-extrabold text-sm tracking-tight flex items-center gap-1.5">
+            Simple<span class="text-primary-light">Floww</span>
+            <span class="text-[10px] bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded font-mono font-medium">DEMO</span>
+          </div>
+        </div>
+      </a>
+
+      <!-- Back to Landing Page Link -->
+      <a href="index.html" class="hidden md:inline-flex items-center gap-1 text-xs text-slate-400 hover:text-white transition ml-3 border-l border-slate-800 pl-3">
+        <i data-lucide="arrow-left" class="w-3.5 h-3.5"></i> Back to Landing Page
+      </a>
+    </div>
+
+    <!-- MAIN PANEL SWITCHER TABS -->
+    <div class="flex items-center bg-slate-900 p-1 rounded-xl border border-slate-800">
+      <button id="btn-mode-user" onclick="switchMainPanel('user')"
+        class="flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-lg text-xs font-bold transition-all bg-primary text-white shadow-md shadow-primary/30">
+        <i data-lucide="user-check" class="w-3.5 h-3.5"></i>
+        <span>User / Client Panel</span>
+      </button>
+
+      <button id="btn-mode-admin" onclick="switchMainPanel('admin')"
+        class="flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white">
+        <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+        <span>Reseller SuperAdmin</span>
+      </button>
+    </div>
+
+    <!-- Dummy Data Indicator & Quick Reset -->
+    <div class="flex items-center gap-2.5">
+      <div class="hidden lg:flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-emerald-950/80 border border-emerald-800 text-emerald-400 text-[11px] font-mono">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping"></span>
+        <span>100% Dummy Data Sandbox</span>
+      </div>
+      <button onclick="showQuickHelpModal()" class="p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs flex items-center gap-1" title="Demo Information">
+        <i data-lucide="help-circle" class="w-4 h-4"></i>
+      </button>
+    </div>
+  </div>
+
+  <!-- ================= CONTAINER: HOLDS USER & ADMIN VIEWS ================= -->
+  <div class="h-[calc(100vh-3.5rem)] overflow-hidden relative">
+
+    <!-- ================================================================ -->
+    <!-- VIEW 1: USER / CLIENT PANEL (https://demo.simplefloww.com)       -->
+    <!-- ================================================================ -->
+    <div id="view-user-panel" class="h-full flex flex-col md:flex-row bg-[#F8FAFC]">
+      
+      <!-- User Sidebar -->
+      <aside class="w-full md:w-64 bg-white border-r border-slate-200 flex flex-col shrink-0">
+        
+        <!-- Workspace Header -->
+        <div class="p-4 border-b border-slate-100 flex items-center justify-between">
+          <div class="flex items-center gap-2.5">
+            <div class="w-9 h-9 rounded-xl bg-blue-50 border border-blue-100 text-primary flex items-center justify-center font-bold text-sm">
+              DA
+            </div>
+            <div>
+              <div class="font-bold text-slate-900 text-xs sm:text-sm">Demo Account</div>
+              <div class="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Official Cloud API
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="p-3 space-y-1 flex-1 overflow-y-auto text-xs font-semibold">
+          <button onclick="switchUserTab('overview')" id="nav-user-overview" class="user-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-primary/10 text-primary font-bold">
+            <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+            <span>Dashboard</span>
+          </button>
+          
+          <button onclick="switchUserTab('inbox')" id="nav-user-inbox" class="user-nav-item w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-900">
+            <div class="flex items-center gap-3">
+              <i data-lucide="message-square" class="w-4 h-4 text-emerald-600"></i>
+              <span>Live Team Inbox</span>
+            </div>
+            <span class="px-1.5 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-bold">3</span>
+          </button>
+
+          <button onclick="switchUserTab('automation')" id="nav-user-automation" class="user-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-900">
+            <i data-lucide="git-branch" class="w-4 h-4 text-purple-600"></i>
+            <span>Flow Builder (Bot)</span>
+          </button>
+
+          <button onclick="switchUserTab('campaigns')" id="nav-user-campaigns" class="user-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-900">
+            <i data-lucide="send" class="w-4 h-4 text-blue-600"></i>
+            <span>Broadcast Campaigns</span>
+          </button>
+
+          <button onclick="switchUserTab('crm')" id="nav-user-crm" class="user-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-900">
+            <i data-lucide="kanban" class="w-4 h-4 text-amber-600"></i>
+            <span>Smart CRM Leads</span>
+          </button>
+
+          <button onclick="switchUserTab('ai')" id="nav-user-ai" class="user-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-900">
+            <i data-lucide="sparkles" class="w-4 h-4 text-cyan-600"></i>
+            <span>AI Employee / Chatbot</span>
+          </button>
+
+          <button onclick="switchUserTab('contacts')" id="nav-user-contacts" class="user-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-900">
+            <i data-lucide="users" class="w-4 h-4 text-slate-600"></i>
+            <span>Contacts & Tags</span>
+          </button>
+
+          <button onclick="switchUserTab('settings')" id="nav-user-settings" class="user-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-900">
+            <i data-lucide="settings" class="w-4 h-4 text-slate-500"></i>
+            <span>API & Settings</span>
+          </button>
+        </nav>
+
+        <!-- User Quota Widget -->
+        <div class="p-3.5 m-3 rounded-2xl bg-slate-50 border border-slate-100 text-xs">
+          <div class="flex justify-between items-center text-slate-500 mb-1.5 font-medium">
+            <span>Conversations Quota</span>
+            <span class="font-bold text-slate-800">4,280 / 10,000</span>
+          </div>
+          <div class="w-full bg-slate-200 h-1.5 rounded-full overflow-hidden">
+            <div class="bg-primary h-full w-[42%]"></div>
+          </div>
+          <div class="text-[10px] text-slate-400 mt-2 flex items-center justify-between">
+            <span>Tier: Growth Plan</span>
+            <span class="text-emerald-600 font-bold">Active</span>
+          </div>
+        </div>
+
+      </aside>
+
+      <!-- User Main Stage -->
+      <main class="flex-1 overflow-y-auto bg-slate-50/70 p-4 sm:p-6 lg:p-8">
+
+        <!-- TAB 1: OVERVIEW DASHBOARD -->
+        <div id="user-tab-overview" class="user-content-pane space-y-6">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h2 class="text-xl sm:text-2xl font-black text-slate-900">Business Overview</h2>
+              <p class="text-xs sm:text-sm text-slate-500">Real-time WhatsApp engagement and campaign analytics</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="switchUserTab('campaigns')" class="px-3.5 py-2 rounded-xl bg-primary hover:bg-primary-dark text-white font-bold text-xs shadow-md shadow-primary/20 flex items-center gap-1.5">
+                <i data-lucide="send" class="w-3.5 h-3.5"></i> New Broadcast
+              </button>
+              <button onclick="switchUserTab('inbox')" class="px-3.5 py-2 rounded-xl bg-white border border-slate-200 text-slate-700 font-bold text-xs hover:bg-slate-50 flex items-center gap-1.5">
+                <i data-lucide="message-square" class="w-3.5 h-3.5"></i> Open Inbox
+              </button>
+            </div>
+          </div>
+
+          <!-- Metrics Row -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="p-5 rounded-2xl bg-white border border-slate-100 shadow-xs">
+              <div class="text-xs text-slate-500 font-medium">Total Messages Sent</div>
+              <div class="text-2xl font-black text-slate-900 mt-1">128,490</div>
+              <div class="text-[11px] text-emerald-600 font-semibold mt-1">↑ 18.4% from last week</div>
+            </div>
+            <div class="p-5 rounded-2xl bg-white border border-slate-100 shadow-xs">
+              <div class="text-xs text-slate-500 font-medium">Avg Response Rate</div>
+              <div class="text-2xl font-black text-emerald-600 mt-1">98.6%</div>
+              <div class="text-[11px] text-slate-400 mt-1">Under 0.4s AI Latency</div>
+            </div>
+            <div class="p-5 rounded-2xl bg-white border border-slate-100 shadow-xs">
+              <div class="text-xs text-slate-500 font-medium">New Leads Captured</div>
+              <div class="text-2xl font-black text-blue-600 mt-1">1,842</div>
+              <div class="text-[11px] text-blue-600 font-semibold mt-1">74% Qualified by AI</div>
+            </div>
+            <div class="p-5 rounded-2xl bg-white border border-slate-100 shadow-xs">
+              <div class="text-xs text-slate-500 font-medium">Deals Closed via Chat</div>
+              <div class="text-2xl font-black text-purple-600 mt-1">₹3,42,000</div>
+              <div class="text-[11px] text-purple-600 font-semibold mt-1">26.3% Win Ratio</div>
+            </div>
+          </div>
+
+          <!-- Visual Activity Chart & Recent Broadcasts -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 p-6 rounded-2xl bg-white border border-slate-100 shadow-xs space-y-4">
+              <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 class="font-bold text-slate-900 text-sm">Hourly Message Volume</h3>
+                <span class="text-xs font-mono text-slate-400">Live 24h Peak</span>
+              </div>
+              <div class="h-48 flex items-end justify-between gap-2 pt-6">
+                <!-- Bar simulation -->
+                <div class="flex-1 bg-blue-100 hover:bg-primary rounded-t transition-all h-[30%]"></div>
+                <div class="flex-1 bg-blue-100 hover:bg-primary rounded-t transition-all h-[45%]"></div>
+                <div class="flex-1 bg-blue-100 hover:bg-primary rounded-t transition-all h-[60%]"></div>
+                <div class="flex-1 bg-blue-100 hover:bg-primary rounded-t transition-all h-[80%]"></div>
+                <div class="flex-1 bg-primary rounded-t transition-all h-[95%]"></div>
+                <div class="flex-1 bg-blue-100 hover:bg-primary rounded-t transition-all h-[75%]"></div>
+                <div class="flex-1 bg-blue-100 hover:bg-primary rounded-t transition-all h-[55%]"></div>
+                <div class="flex-1 bg-blue-100 hover:bg-primary rounded-t transition-all h-[70%]"></div>
+                <div class="flex-1 bg-blue-100 hover:bg-primary rounded-t transition-all h-[88%]"></div>
+                <div class="flex-1 bg-blue-100 hover:bg-primary rounded-t transition-all h-[64%]"></div>
+              </div>
+              <div class="flex justify-between text-[11px] text-slate-400 font-mono">
+                <span>00:00</span>
+                <span>06:00</span>
+                <span>12:00</span>
+                <span>18:00</span>
+                <span>Now</span>
+              </div>
+            </div>
+
+            <!-- Quick Bot Status Card -->
+            <div class="p-6 rounded-2xl bg-white border border-slate-100 shadow-xs space-y-4 flex flex-col justify-between">
+              <div>
+                <div class="flex items-center justify-between mb-3">
+                  <h3 class="font-bold text-slate-900 text-sm">Active AI Assistants</h3>
+                  <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                </div>
+                <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-100 space-y-2 text-xs">
+                  <div class="font-bold text-slate-800">Support Agent GPT-4o</div>
+                  <p class="text-slate-500 text-[11px]">Trained on: FAQs, Return Policy, Product PDF</p>
+                  <div class="flex items-center justify-between text-[10px] text-emerald-600 font-semibold pt-1">
+                    <span>Handled 814 chats today</span>
+                    <span>100% Online</span>
+                  </div>
+                </div>
+              </div>
+              <button onclick="switchUserTab('ai')" class="w-full py-2.5 rounded-xl bg-slate-900 text-white font-bold text-xs hover:bg-slate-800 transition">
+                Configure AI Agent
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 2: LIVE TEAM INBOX (WhatsApp Web Replica) -->
+        <div id="user-tab-inbox" class="user-content-pane hidden h-[calc(100vh-8rem)] bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs flex">
+          
+          <!-- Chats List Pane -->
+          <div class="w-80 border-r border-slate-200 flex flex-col shrink-0">
+            <div class="p-3 border-b border-slate-100 bg-slate-50/50 flex items-center justify-between">
+              <span class="font-bold text-sm text-slate-800">Conversations</span>
+              <span class="text-[11px] font-semibold text-primary">All (14)</span>
+            </div>
+            
+            <div class="p-2 border-b border-slate-100">
+              <div class="relative">
+                <i data-lucide="search" class="w-3.5 h-3.5 text-slate-400 absolute left-3 top-2.5"></i>
+                <input type="text" placeholder="Search chats or phone..." class="w-full pl-8 pr-3 py-1.5 rounded-lg bg-slate-100 text-xs outline-none">
+              </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto divide-y divide-slate-100 text-xs" id="chat-list-container">
+              <!-- Chat Item 1 (Active) -->
+              <div onclick="selectChat(0)" class="chat-list-item p-3 cursor-pointer bg-blue-50/70 border-l-4 border-primary transition flex items-start gap-2.5">
+                <div class="w-9 h-9 rounded-full bg-emerald-500/10 text-emerald-700 font-bold flex items-center justify-center shrink-0">
+                  RV
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex justify-between items-center mb-0.5">
+                    <span class="font-bold text-slate-900 truncate">Rahul Verma</span>
+                    <span class="text-[10px] text-slate-400 font-mono">10:42 AM</span>
+                  </div>
+                  <p class="text-slate-500 text-[11px] truncate">Can you share the pricing for the 50 user plan?</p>
+                  <div class="flex gap-1 mt-1">
+                    <span class="px-1.5 py-0.2 rounded text-[9px] bg-amber-100 text-amber-800 font-bold">Hot Lead</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Chat Item 2 -->
+              <div onclick="selectChat(1)" class="chat-list-item p-3 cursor-pointer hover:bg-slate-50 transition flex items-start gap-2.5">
+                <div class="w-9 h-9 rounded-full bg-blue-500/10 text-blue-700 font-bold flex items-center justify-center shrink-0">
+                  PS
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex justify-between items-center mb-0.5">
+                    <span class="font-bold text-slate-900 truncate">Priya Sharma (D2C)</span>
+                    <span class="text-[10px] text-slate-400 font-mono">09:15 AM</span>
+                  </div>
+                  <p class="text-slate-500 text-[11px] truncate">Thanks! The abandoned cart bot worked.</p>
+                  <div class="flex gap-1 mt-1">
+                    <span class="px-1.5 py-0.2 rounded text-[9px] bg-emerald-100 text-emerald-800 font-bold">Won Deal</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Chat Item 3 -->
+              <div onclick="selectChat(2)" class="chat-list-item p-3 cursor-pointer hover:bg-slate-50 transition flex items-start gap-2.5">
+                <div class="w-9 h-9 rounded-full bg-purple-500/10 text-purple-700 font-bold flex items-center justify-center shrink-0">
+                  AK
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex justify-between items-center mb-0.5">
+                    <span class="font-bold text-slate-900 truncate">Amit Kumar Realtor</span>
+                    <span class="text-[10px] text-slate-400 font-mono">Yesterday</span>
+                  </div>
+                  <p class="text-slate-500 text-[11px] truncate">Please book appointment for Saturday 4pm.</p>
+                  <div class="flex gap-1 mt-1">
+                    <span class="px-1.5 py-0.2 rounded text-[9px] bg-blue-100 text-blue-800 font-bold">Appointment</span>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Chat Conversation Window -->
+          <div class="flex-1 flex flex-col bg-[#efeae2] relative overflow-hidden">
+            <!-- Chat Topbar -->
+            <div class="h-14 bg-white border-b border-slate-200 px-4 flex items-center justify-between shrink-0">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-800 font-bold flex items-center justify-center text-xs" id="chat-header-avatar">
+                  RV
+                </div>
+                <div>
+                  <div class="font-bold text-xs sm:text-sm text-slate-900" id="chat-header-name">Rahul Verma (+91 98234 56789)</div>
+                  <div class="text-[10px] text-emerald-600 font-semibold flex items-center gap-1">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> Online • Assigned: AI Agent + Senior Sales
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="px-2 py-0.5 rounded text-[10px] bg-slate-100 border border-slate-200 font-mono text-slate-600">Lead Score: 92/100</span>
+              </div>
+            </div>
+
+            <!-- Messages Stream -->
+            <div class="flex-1 overflow-y-auto p-4 space-y-3" id="chat-messages-container">
+              <!-- Customer Msg -->
+              <div class="flex justify-start">
+                <div class="bg-white p-3 rounded-2xl rounded-tl-none shadow-xs max-w-sm text-xs text-slate-800 space-y-1">
+                  <p>Hi, I saw your WhatsApp API demo. We are looking for an automation solution for 50 sales agents.</p>
+                  <div class="text-[10px] text-slate-400 text-right">10:40 AM</div>
+                </div>
+              </div>
+
+              <!-- AI Bot Msg -->
+              <div class="flex justify-end">
+                <div class="bg-[#d9fdd3] p-3 rounded-2xl rounded-tr-none shadow-xs max-w-sm text-xs text-slate-800 space-y-1">
+                  <div class="text-[9px] font-bold text-emerald-800 flex items-center gap-1">
+                    <i data-lucide="bot" class="w-3 h-3"></i> SimpleFloww AI Assistant
+                  </div>
+                  <p>Hello Rahul! Great to connect. Our Enterprise package provides unlimited agent seats, shared team inbox, and custom routing.</p>
+                  <p>Would you like to schedule a 15-minute quick walkthrough?</p>
+                  <div class="text-[10px] text-slate-400 text-right flex items-center justify-end gap-1">
+                    <span>10:41 AM</span>
+                    <i data-lucide="check-check" class="w-3.5 h-3.5 text-blue-500"></i>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Customer Msg -->
+              <div class="flex justify-start">
+                <div class="bg-white p-3 rounded-2xl rounded-tl-none shadow-xs max-w-sm text-xs text-slate-800 space-y-1">
+                  <p>Yes please, can you share the pricing sheet as well?</p>
+                  <div class="text-[10px] text-slate-400 text-right">10:42 AM</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Chat Reply Box -->
+            <div class="p-3 bg-white border-t border-slate-200 flex items-center gap-2 shrink-0">
+              <input type="text" id="demo-chat-input" placeholder="Type a message or press enter to test..." 
+                onkeydown="if(event.key==='Enter') sendDemoMessage()"
+                class="flex-1 px-4 py-2.5 rounded-xl bg-slate-100 text-xs outline-none focus:ring-1 focus:ring-primary">
+              <button onclick="sendDemoMessage()" class="p-2.5 rounded-xl bg-primary hover:bg-primary-dark text-white shadow-md shadow-primary/20">
+                <i data-lucide="send" class="w-4 h-4"></i>
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- TAB 3: VISUAL NO-CODE FLOW BUILDER -->
+        <div id="user-tab-automation" class="user-content-pane hidden space-y-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-xl font-black text-slate-900">Visual Chatbot Flow Designer</h2>
+              <p class="text-xs text-slate-500">Drag & drop nodes to automate WhatsApp journeys</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <button onclick="showDemoToast('Flow saved and deployed to Meta Cloud API')" class="px-4 py-2 rounded-xl bg-primary text-white font-bold text-xs shadow-md shadow-primary/20">
+                Save & Deploy Bot
+              </button>
+            </div>
+          </div>
+
+          <!-- Flowchart Canvas Simulator -->
+          <div class="h-[480px] bg-slate-900 rounded-2xl border border-slate-800 relative overflow-hidden p-6 flex items-center justify-center">
+            
+            <div class="absolute inset-0 bg-grid opacity-20 pointer-events-none"></div>
+
+            <!-- Node 1: Trigger -->
+            <div class="flex flex-col sm:flex-row items-center gap-6 z-10">
+              
+              <div class="w-56 p-4 rounded-xl bg-slate-800 border-2 border-emerald-500 shadow-xl space-y-2">
+                <div class="flex items-center justify-between text-xs font-bold text-emerald-400">
+                  <span class="flex items-center gap-1.5"><i data-lucide="zap" class="w-3.5 h-3.5"></i> Trigger Node</span>
+                  <span class="text-[10px] bg-emerald-950 px-1.5 py-0.5 rounded border border-emerald-800">Keyword</span>
+                </div>
+                <div class="text-xs text-white">When message contains:</div>
+                <div class="text-[11px] font-mono text-emerald-300 bg-slate-950 p-1.5 rounded">"Hi", "Demo", "Price"</div>
+              </div>
+
+              <i data-lucide="arrow-right" class="w-6 h-6 text-slate-500"></i>
+
+              <!-- Node 2: AI Qualification -->
+              <div class="w-60 p-4 rounded-xl bg-slate-800 border-2 border-primary shadow-xl space-y-2">
+                <div class="flex items-center justify-between text-xs font-bold text-primary-light">
+                  <span class="flex items-center gap-1.5"><i data-lucide="bot" class="w-3.5 h-3.5"></i> AI Employee</span>
+                  <span class="text-[10px] bg-blue-950 px-1.5 py-0.5 rounded border border-blue-800">ChatGPT 4o</span>
+                </div>
+                <div class="text-xs text-white">Ask Qualification Questions:</div>
+                <p class="text-[11px] text-slate-400">Extract Name, Company, Requirements, and Budget</p>
+              </div>
+
+              <i data-lucide="arrow-right" class="w-6 h-6 text-slate-500"></i>
+
+              <!-- Node 3: CRM Routing -->
+              <div class="w-56 p-4 rounded-xl bg-slate-800 border-2 border-purple-500 shadow-xl space-y-2">
+                <div class="flex items-center justify-between text-xs font-bold text-purple-400">
+                  <span class="flex items-center gap-1.5"><i data-lucide="user-plus" class="w-3.5 h-3.5"></i> Action Node</span>
+                  <span class="text-[10px] bg-purple-950 px-1.5 py-0.5 rounded border border-purple-800">CRM Assign</span>
+                </div>
+                <div class="text-xs text-white">If Budget > ₹50,000:</div>
+                <div class="text-[11px] font-semibold text-purple-300">Route to Senior Account Exec</div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+        <!-- TAB 4: BROADCAST CAMPAIGNS -->
+        <div id="user-tab-campaigns" class="user-content-pane hidden space-y-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-xl font-black text-slate-900">Broadcast Campaigns</h2>
+              <p class="text-xs text-slate-500">High-delivery template broadcasts with Meta Cloud API</p>
+            </div>
+            <button onclick="showBroadcastModal()" class="px-4 py-2 rounded-xl bg-primary text-white font-bold text-xs shadow-md shadow-primary/20 flex items-center gap-1.5">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i> Create New Campaign
+            </button>
+          </div>
+
+          <div class="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-slate-50 border-b border-slate-100 text-slate-500 font-semibold uppercase tracking-wider text-[10px]">
+                <tr>
+                  <th class="p-4">Campaign Name</th>
+                  <th class="p-4">Audience</th>
+                  <th class="p-4">Delivery Rate</th>
+                  <th class="p-4">Read Rate</th>
+                  <th class="p-4">CTR (Clicked)</th>
+                  <th class="p-4">Status</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 text-slate-700">
+                <tr class="hover:bg-slate-50">
+                  <td class="p-4 font-bold text-slate-900">Festive Season VIP Offer</td>
+                  <td class="p-4">24,500 contacts</td>
+                  <td class="p-4 text-emerald-600 font-bold">99.4% (24,352)</td>
+                  <td class="p-4 font-semibold">91.8% (22,492)</td>
+                  <td class="p-4 text-primary font-bold">38.2%</td>
+                  <td class="p-4"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-bold">Completed</span></td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="p-4 font-bold text-slate-900">Webinar Registration Reminder</td>
+                  <td class="p-4">6,120 contacts</td>
+                  <td class="p-4 text-emerald-600 font-bold">99.1% (6,065)</td>
+                  <td class="p-4 font-semibold">89.4% (5,471)</td>
+                  <td class="p-4 text-primary font-bold">44.1%</td>
+                  <td class="p-4"><span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-bold">Completed</span></td>
+                </tr>
+                <tr class="hover:bg-slate-50">
+                  <td class="p-4 font-bold text-slate-900">Cart Recovery Sequence #2</td>
+                  <td class="p-4">840 contacts</td>
+                  <td class="p-4 text-emerald-600 font-bold">99.8% (838)</td>
+                  <td class="p-4 font-semibold">94.0% (790)</td>
+                  <td class="p-4 text-primary font-bold">52.4%</td>
+                  <td class="p-4"><span class="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold">Active Stream</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- TAB 5: SMART CRM LEADS (Kanban) -->
+        <div id="user-tab-crm" class="user-content-pane hidden space-y-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-xl font-black text-slate-900">WhatsApp Kanban CRM</h2>
+              <p class="text-xs text-slate-500">Track and drag leads across conversion stages</p>
+            </div>
+            <span class="text-xs font-mono font-bold text-slate-600">Total Active Pipeline: ₹4,55,000</span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            
+            <!-- Stage 1 -->
+            <div class="p-3 bg-slate-100/80 rounded-2xl space-y-3">
+              <div class="flex justify-between items-center text-xs font-bold text-slate-700 px-1">
+                <span>New Inquiries (4)</span>
+                <span class="text-slate-400 font-mono">₹45k</span>
+              </div>
+              <div class="p-3 bg-white rounded-xl shadow-xs border border-slate-200 text-xs space-y-1.5">
+                <div class="font-bold text-slate-900">Vikash Sharma</div>
+                <div class="text-slate-500 text-[11px]">+91 98111 22334</div>
+                <div class="text-[10px] text-amber-600 font-bold bg-amber-50 p-1 rounded">Interest: 50 Agent Setup</div>
+              </div>
+              <div class="p-3 bg-white rounded-xl shadow-xs border border-slate-200 text-xs space-y-1.5">
+                <div class="font-bold text-slate-900">Global EduTech</div>
+                <div class="text-slate-500 text-[11px]">+91 97222 33445</div>
+                <div class="text-[10px] text-blue-600 font-bold bg-blue-50 p-1 rounded">Source: Website Form</div>
+              </div>
+            </div>
+
+            <!-- Stage 2 -->
+            <div class="p-3 bg-slate-100/80 rounded-2xl space-y-3">
+              <div class="flex justify-between items-center text-xs font-bold text-slate-700 px-1">
+                <span>Qualified by AI (2)</span>
+                <span class="text-slate-400 font-mono">₹1,20k</span>
+              </div>
+              <div class="p-3 bg-white rounded-xl shadow-xs border border-slate-200 text-xs space-y-1.5">
+                <div class="font-bold text-slate-900">Nexus Logistics</div>
+                <div class="text-slate-500 text-[11px]">+91 98333 44556</div>
+                <div class="text-[10px] text-purple-600 font-bold bg-purple-50 p-1 rounded">Budget Confirmed: ₹75k</div>
+              </div>
+            </div>
+
+            <!-- Stage 3 -->
+            <div class="p-3 bg-slate-100/80 rounded-2xl space-y-3">
+              <div class="flex justify-between items-center text-xs font-bold text-slate-700 px-1">
+                <span>Proposal Sent (2)</span>
+                <span class="text-slate-400 font-mono">₹90k</span>
+              </div>
+              <div class="p-3 bg-white rounded-xl shadow-xs border border-slate-200 text-xs space-y-1.5">
+                <div class="font-bold text-slate-900">Dr. Mehta Clinics</div>
+                <div class="text-slate-500 text-[11px]">+91 99444 55667</div>
+                <div class="text-[10px] text-emerald-600 font-bold bg-emerald-50 p-1 rounded">Awaiting Contract Sign</div>
+              </div>
+            </div>
+
+            <!-- Stage 4 -->
+            <div class="p-3 bg-slate-100/80 rounded-2xl space-y-3">
+              <div class="flex justify-between items-center text-xs font-bold text-emerald-700 px-1">
+                <span>Won Deals (5)</span>
+                <span class="text-emerald-600 font-mono">₹2,00k</span>
+              </div>
+              <div class="p-3 bg-white rounded-xl shadow-xs border-2 border-emerald-500/30 text-xs space-y-1.5">
+                <div class="font-bold text-slate-900">Urban D2C Apparels</div>
+                <div class="text-slate-500 text-[11px]">+91 98555 66778</div>
+                <div class="text-[10px] text-emerald-600 font-bold bg-emerald-50 p-1 rounded">Annual Retainer Closed</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- TAB 6: AI EMPLOYEE CONFIG -->
+        <div id="user-tab-ai" class="user-content-pane hidden space-y-6">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-xl font-black text-slate-900">AI Assistant Knowledge Base</h2>
+              <p class="text-xs text-slate-500">Train ChatGPT on your business documents and FAQs</p>
+            </div>
+            <button onclick="showDemoToast('AI Training Completed! Accuracy: 99.4%')" class="px-4 py-2 rounded-xl bg-primary text-white font-bold text-xs shadow-md shadow-primary/20">
+              Retrain AI Model
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="p-6 rounded-2xl bg-white border border-slate-200 space-y-4">
+              <label class="block text-xs font-bold uppercase text-slate-700">System Persona & Prompt</label>
+              <textarea rows="6" class="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono text-slate-800 outline-none">You are the AI Assistant for SimpleFloww Business. 
+Your goal is to politely answer customer inquiries, describe our features, recommend the best subscription tier, and collect the user's name and email for human handoff.</textarea>
+              <div class="text-[11px] text-slate-500">Max tokens: 500 • Temperature: 0.2 (Factually precise)</div>
+            </div>
+
+            <div class="p-6 rounded-2xl bg-white border border-slate-200 space-y-4">
+              <label class="block text-xs font-bold uppercase text-slate-700">Uploaded Knowledge Docs</label>
+              <div class="space-y-2.5">
+                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs">
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="file-text" class="w-4 h-4 text-primary"></i>
+                    <span class="font-semibold text-slate-800">Product_Catalog_2026.pdf</span>
+                  </div>
+                  <span class="text-emerald-600 font-bold text-[10px]">Trained (42 pages)</span>
+                </div>
+                <div class="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs">
+                  <div class="flex items-center gap-2">
+                    <i data-lucide="file-text" class="w-4 h-4 text-primary"></i>
+                    <span class="font-semibold text-slate-800">Pricing_and_Refund_Terms.docx</span>
+                  </div>
+                  <span class="text-emerald-600 font-bold text-[10px]">Trained</span>
+                </div>
+              </div>
+              <button onclick="showDemoToast('Upload simulator: File parsed!')" class="w-full py-2.5 rounded-xl border border-dashed border-slate-300 text-xs font-semibold text-slate-600 hover:bg-slate-50">
+                + Upload New PDF or Doc
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- TAB 7: CONTACTS & TAGS -->
+        <div id="user-tab-contacts" class="user-content-pane hidden space-y-4">
+          <h2 class="text-xl font-black text-slate-900">Contacts & Tags</h2>
+          <div class="bg-white rounded-2xl border border-slate-200 p-4">
+            <div class="text-xs text-slate-500">Total 4,892 verified contacts synced with Meta WhatsApp Cloud API.</div>
+          </div>
+        </div>
+
+        <!-- TAB 8: API & SETTINGS -->
+        <div id="user-tab-settings" class="user-content-pane hidden space-y-4">
+          <h2 class="text-xl font-black text-slate-900">WhatsApp Cloud API Connection</h2>
+          <div class="p-6 rounded-2xl bg-white border border-slate-200 space-y-4">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold">
+                <i data-lucide="check" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <div class="text-sm font-bold text-slate-900">Meta Cloud API: Connected & Verified</div>
+                <div class="text-xs text-slate-500">Phone ID: 1049281729102 • WABA ID: 4920194820194</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+
+    </div>
+
+    <!-- ================================================================ -->
+    <!-- VIEW 2: RESELLER SUPERADMIN PANEL (https://demo.simplefloww.com/admin) -->
+    <!-- ================================================================ -->
+    <div id="view-admin-panel" class="hidden h-full flex flex-col md:flex-row bg-[#080808] text-white">
+      
+      <!-- Admin Sidebar (Industrial Dark Style) -->
+      <aside class="w-full md:w-64 bg-[#0c0c0c] border-r border-[#1a1a1a] flex flex-col shrink-0">
+        
+        <div class="p-4 border-b border-[#1a1a1a] flex items-center gap-3">
+          <div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center shadow-lg shadow-primary/30">
+            <i data-lucide="zap" class="w-5 h-5 text-white font-bold"></i>
+          </div>
+          <div>
+            <div class="font-black text-sm tracking-widest uppercase text-white">Demo Agency</div>
+            <div class="text-[9px] font-mono text-primary font-bold tracking-widest uppercase">Reseller SuperAdmin</div>
+          </div>
+        </div>
+
+        <nav class="p-3 space-y-1 flex-1 overflow-y-auto text-xs font-semibold">
+          <button onclick="switchAdminTab('overview')" id="nav-admin-overview" class="admin-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-primary/20 text-primary border border-primary/40 font-bold">
+            <i data-lucide="gauge" class="w-4 h-4"></i>
+            <span>Master Overview</span>
+          </button>
+
+          <button onclick="switchAdminTab('tenants')" id="nav-admin-tenants" class="admin-nav-item w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-slate-400 hover:bg-slate-900 hover:text-white">
+            <div class="flex items-center gap-3">
+              <i data-lucide="building-2" class="w-4 h-4 text-primary"></i>
+              <span>Business Sub-Accounts</span>
+            </div>
+            <span class="px-1.5 py-0.5 rounded-full bg-slate-800 text-slate-300 text-[10px] font-mono">38</span>
+          </button>
+
+          <button onclick="switchAdminTab('whitelabel')" id="nav-admin-whitelabel" class="admin-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:bg-slate-900 hover:text-white">
+            <i data-lucide="palette" class="w-4 h-4 text-emerald-400"></i>
+            <span>White-Label Branding</span>
+          </button>
+
+          <button onclick="switchAdminTab('pricing')" id="nav-admin-pricing" class="admin-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:bg-slate-900 hover:text-white">
+            <i data-lucide="badge-percent" class="w-4 h-4 text-amber-400"></i>
+            <span>Plans & Margin Setting</span>
+          </button>
+
+          <button onclick="switchAdminTab('infrastructure')" id="nav-admin-infrastructure" class="admin-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:bg-slate-900 hover:text-white">
+            <i data-lucide="server" class="w-4 h-4 text-cyan-400"></i>
+            <span>Node Network & Infra</span>
+          </button>
+        </nav>
+
+        <div class="p-3.5 m-3 rounded-xl bg-slate-950 border border-slate-800 text-xs space-y-1">
+          <div class="text-[10px] font-mono text-slate-500 uppercase">System Status</div>
+          <div class="text-emerald-400 font-bold flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            Operational (100% Uptime)
+          </div>
+        </div>
+
+      </aside>
+
+      <!-- Admin Main Content -->
+      <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[#080808] relative">
+        <div class="absolute inset-0 bg-grid opacity-10 pointer-events-none"></div>
+
+        <!-- ADMIN TAB 1: MASTER OVERVIEW -->
+        <div id="admin-tab-overview" class="admin-content-pane space-y-6 relative z-10">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <div class="text-[10px] font-mono text-primary font-bold uppercase tracking-widest">Reseller SuperAdmin Control</div>
+              <h2 class="text-2xl font-black uppercase tracking-tight text-white mt-1">Platform Performance</h2>
+            </div>
+            <button onclick="switchAdminTab('tenants')" class="px-4 py-2 rounded-xl bg-primary hover:bg-primary-dark text-white font-bold text-xs flex items-center gap-1.5 shadow-lg shadow-primary/20">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i> Add Client Account
+            </button>
+          </div>
+
+          <!-- Top Stats Row -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="p-5 rounded-2xl bg-[#0c0c0c] border border-[#1a1a1a] industrial-corner">
+              <div class="text-[10px] font-mono text-slate-400 uppercase">Total Agency Clients</div>
+              <div class="text-3xl font-black text-white font-mono mt-1">38</div>
+              <div class="text-[11px] text-emerald-400 mt-1">100% Retained</div>
+            </div>
+            <div class="p-5 rounded-2xl bg-[#0c0c0c] border border-[#1a1a1a] industrial-corner">
+              <div class="text-[10px] font-mono text-slate-400 uppercase">Monthly SaaS Retainer MRR</div>
+              <div class="text-3xl font-black text-emerald-400 font-mono mt-1">₹1,95,000</div>
+              <div class="text-[11px] text-slate-400 mt-1">100% Profit to You</div>
+            </div>
+            <div class="p-5 rounded-2xl bg-[#0c0c0c] border border-[#1a1a1a] industrial-corner">
+              <div class="text-[10px] font-mono text-slate-400 uppercase">Total Messages Processed</div>
+              <div class="text-3xl font-black text-primary font-mono mt-1">1,420,890</div>
+              <div class="text-[11px] text-blue-400 mt-1">Across all client accounts</div>
+            </div>
+            <div class="p-5 rounded-2xl bg-[#0c0c0c] border border-[#1a1a1a] industrial-corner">
+              <div class="text-[10px] font-mono text-slate-400 uppercase">White-Label Subdomain</div>
+              <div class="text-xs font-mono text-white mt-2 truncate">app.youragency.com</div>
+              <div class="text-[10px] text-emerald-400 mt-1">SSL Certificate Active</div>
+            </div>
+          </div>
+
+          <!-- Managed Client Sub-Accounts Preview -->
+          <div class="p-6 rounded-2xl bg-[#0c0c0c] border border-[#1a1a1a] space-y-4">
+            <div class="flex items-center justify-between border-b border-[#1a1a1a] pb-3">
+              <h3 class="font-bold text-sm text-white">Active Managed Sub-Accounts</h3>
+              <button onclick="switchAdminTab('tenants')" class="text-xs text-primary hover:underline font-semibold">View All 38 Clients →</button>
+            </div>
+
+            <div class="space-y-2.5">
+              <div class="p-3.5 rounded-xl bg-[#080808] border border-[#1a1a1a] flex items-center justify-between text-xs">
+                <div>
+                  <div class="font-bold text-white text-sm">Dental Smiles Clinic</div>
+                  <div class="text-[10px] text-slate-400">Plan: Enterprise (₹9,999/mo) • Created: 12 Aug 2026</div>
+                </div>
+                <div class="text-right">
+                  <div class="text-emerald-400 font-bold">Active</div>
+                  <div class="text-[10px] text-slate-500 font-mono">14,200 msgs used</div>
+                </div>
+              </div>
+
+              <div class="p-3.5 rounded-xl bg-[#080808] border border-[#1a1a1a] flex items-center justify-between text-xs">
+                <div>
+                  <div class="font-bold text-white text-sm">Prestige Luxury Homes (Realtor)</div>
+                  <div class="text-[10px] text-slate-400">Plan: Pro Chatbot (₹6,500/mo) • Created: 04 Sep 2026</div>
+                </div>
+                <div class="text-right">
+                  <div class="text-emerald-400 font-bold">Active</div>
+                  <div class="text-[10px] text-slate-500 font-mono">52,800 msgs used</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ADMIN TAB 2: TENANT MANAGEMENT -->
+        <div id="admin-tab-tenants" class="admin-content-pane hidden space-y-6 relative z-10">
+          <div class="flex items-center justify-between">
+            <div>
+              <h2 class="text-2xl font-black text-white">Client Sub-Account Management</h2>
+              <p class="text-xs text-slate-400">Add, suspend, or configure feature quotas for your clients</p>
+            </div>
+            <button onclick="showAddClientModal()" class="px-4 py-2 rounded-xl bg-primary text-white font-bold text-xs shadow-lg shadow-primary/20 flex items-center gap-1.5">
+              <i data-lucide="user-plus" class="w-3.5 h-3.5"></i> Add New Client Account
+            </button>
+          </div>
+
+          <div class="bg-[#0c0c0c] rounded-2xl border border-[#1a1a1a] overflow-hidden">
+            <table class="w-full text-left text-xs">
+              <thead class="bg-[#080808] border-b border-[#1a1a1a] text-slate-500 font-mono text-[10px] uppercase">
+                <tr>
+                  <th class="p-4">Client / Tenant</th>
+                  <th class="p-4">Owner Email</th>
+                  <th class="p-4">Assigned Plan</th>
+                  <th class="p-4">Monthly Fee</th>
+                  <th class="p-4">Quota</th>
+                  <th class="p-4">Actions</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-[#1a1a1a] text-slate-300">
+                <tr class="hover:bg-[#111]">
+                  <td class="p-4 font-bold text-white">Apex Dental Group</td>
+                  <td class="p-4 font-mono text-slate-400">contact@apexdental.in</td>
+                  <td class="p-4"><span class="px-2 py-0.5 rounded bg-blue-950 text-blue-400 border border-blue-800 text-[10px] font-bold">Enterprise</span></td>
+                  <td class="p-4 font-mono font-bold text-emerald-400">₹9,999/mo</td>
+                  <td class="p-4">25,000 / mo</td>
+                  <td class="p-4"><button onclick="showDemoToast('Logged into Apex Dental client portal as SuperAdmin')" class="text-primary hover:underline font-bold">Login as Client →</button></td>
+                </tr>
+                <tr class="hover:bg-[#111]">
+                  <td class="p-4 font-bold text-white">Metro Properties</td>
+                  <td class="p-4 font-mono text-slate-400">leads@metroproperties.com</td>
+                  <td class="p-4"><span class="px-2 py-0.5 rounded bg-purple-950 text-purple-400 border border-purple-800 text-[10px] font-bold">Pro Bot + CRM</span></td>
+                  <td class="p-4 font-mono font-bold text-emerald-400">₹6,500/mo</td>
+                  <td class="p-4">15,000 / mo</td>
+                  <td class="p-4"><button onclick="showDemoToast('Logged into Metro Properties client portal as SuperAdmin')" class="text-primary hover:underline font-bold">Login as Client →</button></td>
+                </tr>
+                <tr class="hover:bg-[#111]">
+                  <td class="p-4 font-bold text-white">PureGlow Cosmetics</td>
+                  <td class="p-4 font-mono text-slate-400">sales@pureglow.shop</td>
+                  <td class="p-4"><span class="px-2 py-0.5 rounded bg-amber-950 text-amber-400 border border-amber-800 text-[10px] font-bold">E-Com Broadcast</span></td>
+                  <td class="p-4 font-mono font-bold text-emerald-400">₹12,000/mo</td>
+                  <td class="p-4">50,000 / mo</td>
+                  <td class="p-4"><button onclick="showDemoToast('Logged into PureGlow client portal as SuperAdmin')" class="text-primary hover:underline font-bold">Login as Client →</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ADMIN TAB 3: WHITE-LABEL BRANDING SETTINGS -->
+        <div id="admin-tab-whitelabel" class="admin-content-pane hidden space-y-6 relative z-10">
+          <div>
+            <h2 class="text-2xl font-black text-white">100% White-Label Branding Settings</h2>
+            <p class="text-xs text-slate-400">Customize the domain, logo, and colors your clients see</p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="p-6 rounded-2xl bg-[#0c0c0c] border border-[#1a1a1a] space-y-4">
+              <div>
+                <label class="block text-xs font-bold uppercase text-slate-400 mb-1.5">Custom Domain CNAME</label>
+                <input type="text" value="app.growthpulse-agency.com" class="w-full p-3 rounded-xl bg-[#080808] border border-[#1a1a1a] text-xs font-mono text-white outline-none">
+                <p class="text-[11px] text-slate-500 mt-1">Point CNAME record in your DNS (Cloudflare/GoDaddy) to <code class="text-primary font-mono">cname.simplefloww.com</code></p>
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold uppercase text-slate-400 mb-1.5">Agency Brand Name</label>
+                <input type="text" value="GrowthPulse AI Automation" class="w-full p-3 rounded-xl bg-[#080808] border border-[#1a1a1a] text-xs text-white outline-none">
+              </div>
+
+              <div>
+                <label class="block text-xs font-bold uppercase text-slate-400 mb-1.5">Primary Theme Color</label>
+                <div class="flex items-center gap-3">
+                  <input type="color" value="#007BFF" class="w-10 h-10 rounded-lg cursor-pointer bg-transparent border-0">
+                  <input type="text" value="#007BFF" class="p-2.5 rounded-xl bg-[#080808] border border-[#1a1a1a] text-xs font-mono text-white w-32">
+                </div>
+              </div>
+
+              <button onclick="showDemoToast('White-Label branding updated successfully!')" class="w-full py-3 rounded-xl bg-primary font-bold text-xs text-white shadow-lg shadow-primary/20">
+                Save & Apply White-Label Settings
+              </button>
+            </div>
+
+            <!-- Live White-Label Preview Mockup -->
+            <div class="p-6 rounded-2xl bg-[#0c0c0c] border border-[#1a1a1a] space-y-3">
+              <div class="text-xs font-bold uppercase text-slate-400">Live Client Login Screen Preview</div>
+              <div class="p-4 rounded-xl bg-white text-slate-900 shadow-xl space-y-3">
+                <div class="flex items-center gap-2 border-b border-slate-100 pb-2">
+                  <div class="w-6 h-6 rounded bg-primary text-white flex items-center justify-center font-bold text-xs">GP</div>
+                  <span class="font-bold text-xs">GrowthPulse AI</span>
+                </div>
+                <div class="text-center py-4 space-y-1">
+                  <div class="text-sm font-bold">Sign In to Your Workspace</div>
+                  <div class="text-[10px] text-slate-400">Zero mention of SimpleFloww or provider</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ADMIN TAB 4: PRICING PLANS -->
+        <div id="admin-tab-pricing" class="admin-content-pane hidden space-y-6 relative z-10">
+          <div>
+            <h2 class="text-2xl font-black text-white">Your Client Pricing & Margins</h2>
+            <p class="text-xs text-slate-400">You set what clients pay. You keep 100% of the subscription profit.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="p-6 rounded-2xl bg-[#0c0c0c] border border-[#1a1a1a] space-y-3">
+              <div class="text-xs font-bold uppercase text-slate-400">Starter Tier</div>
+              <div class="text-2xl font-black text-white font-mono">₹2,999 <span class="text-xs text-slate-500">/ mo</span></div>
+              <p class="text-xs text-slate-400">5,000 Messages, 2 Agents, Basic Chatbot.</p>
+            </div>
+            <div class="p-6 rounded-2xl bg-[#0c0c0c] border border-primary/50 space-y-3">
+              <div class="text-xs font-bold uppercase text-primary">Pro Tier (Most Popular)</div>
+              <div class="text-2xl font-black text-emerald-400 font-mono">₹6,999 <span class="text-xs text-slate-500">/ mo</span></div>
+              <p class="text-xs text-slate-400">25,000 Messages, 10 Agents, AI Chatbot.</p>
+            </div>
+            <div class="p-6 rounded-2xl bg-[#0c0c0c] border border-[#1a1a1a] space-y-3">
+              <div class="text-xs font-bold uppercase text-purple-400">Enterprise Agency Tier</div>
+              <div class="text-2xl font-black text-purple-400 font-mono">₹14,999 <span class="text-xs text-slate-500">/ mo</span></div>
+              <p class="text-xs text-slate-400">100k Messages, Unlimited Agents, Full CRM.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ADMIN TAB 5: INFRASTRUCTURE -->
+        <div id="admin-tab-infrastructure" class="admin-content-pane hidden space-y-6 relative z-10">
+          <div>
+            <h2 class="text-2xl font-black text-white">Global Cloud Infrastructure</h2>
+            <p class="text-xs text-slate-400">Meta Cloud API High Volume Streams & Server Redundancy</p>
+          </div>
+          <div class="p-6 rounded-2xl bg-[#0c0c0c] border border-[#1a1a1a] space-y-3">
+            <div class="flex items-center justify-between text-xs font-mono">
+              <span class="text-slate-400">API Latency:</span>
+              <span class="text-emerald-400 font-bold">&lt; 1.8ms</span>
+            </div>
+            <div class="flex items-center justify-between text-xs font-mono">
+              <span class="text-slate-400">Firewall Security:</span>
+              <span class="text-blue-400 font-bold">Level-7 Meta Verified</span>
+            </div>
+          </div>
+        </div>
+
+      </main>
+
+    </div>
+
+  </div>
+
+  <!-- ================= MODALS ================= -->
+
+  <!-- MODAL: ADD CLIENT (Admin) -->
+  <div id="modal-add-client" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div class="w-full max-w-md bg-[#0c0c0c] border border-[#1a1a1a] rounded-2xl p-6 text-white space-y-4">
+      <div class="flex items-center justify-between border-b border-[#1a1a1a] pb-3">
+        <h3 class="font-bold text-sm">Add New Business Client</h3>
+        <button onclick="hideAddClientModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block text-slate-400 mb-1">Company / Business Name</label>
+          <input type="text" id="new-client-name" placeholder="e.g. Apollo Diagnostics" class="w-full p-2.5 rounded-lg bg-[#080808] border border-[#1a1a1a] text-white outline-none">
+        </div>
+        <div>
+          <label class="block text-slate-400 mb-1">Client Admin Email</label>
+          <input type="email" id="new-client-email" placeholder="admin@client.com" class="w-full p-2.5 rounded-lg bg-[#080808] border border-[#1a1a1a] text-white outline-none">
+        </div>
+        <div>
+          <label class="block text-slate-400 mb-1">Assigned Plan</label>
+          <select id="new-client-plan" class="w-full p-2.5 rounded-lg bg-[#080808] border border-[#1a1a1a] text-white outline-none">
+            <option value="Pro Bot + CRM (₹6,500/mo)">Pro Bot + CRM (₹6,500/mo)</option>
+            <option value="Enterprise Tier (₹9,999/mo)">Enterprise Tier (₹9,999/mo)</option>
+            <option value="Starter (₹2,999/mo)">Starter (₹2,999/mo)</option>
+          </select>
+        </div>
+      </div>
+      <button onclick="createNewClientSubmit()" class="w-full py-2.5 rounded-xl bg-primary hover:bg-primary-dark font-bold text-xs text-white">
+        Create Client Account & Issue Credentials
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL: CREATE BROADCAST -->
+  <div id="modal-broadcast" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div class="w-full max-w-md bg-white rounded-2xl p-6 text-slate-900 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <h3 class="font-bold text-sm">Send WhatsApp Broadcast Campaign</h3>
+        <button onclick="hideBroadcastModal()" class="text-slate-400 hover:text-slate-700"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block text-slate-700 font-semibold mb-1">Campaign Name</label>
+          <input type="text" placeholder="e.g. Flash Discount Announcement" class="w-full p-2.5 rounded-lg bg-slate-50 border border-slate-200 outline-none">
+        </div>
+        <div>
+          <label class="block text-slate-700 font-semibold mb-1">Select Meta Approved Template</label>
+          <select class="w-full p-2.5 rounded-lg bg-slate-50 border border-slate-200 outline-none">
+            <option>promotional_discount_v2 (Approved)</option>
+            <option>appointment_reminder (Approved)</option>
+          </select>
+        </div>
+      </div>
+      <button onclick="hideBroadcastModal(); showDemoToast('Campaign dispatched to 2,400 contacts!')" class="w-full py-2.5 rounded-xl bg-primary text-white font-bold text-xs">
+        Launch Broadcast Instantly
+      </button>
+    </div>
+  </div>
+
+  <!-- MODAL: QUICK HELP / INFO -->
+  <div id="modal-help" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+    <div class="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-6 text-white space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+        <div class="flex items-center gap-2">
+          <i data-lucide="info" class="w-4 h-4 text-primary"></i>
+          <h3 class="font-bold text-sm">SimpleFloww Demo Guide</h3>
+        </div>
+        <button onclick="hideQuickHelpModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-4 h-4"></i></button>
+      </div>
+      <div class="text-xs text-slate-300 space-y-2.5 leading-relaxed">
+        <p>This interactive demo lets you experience both sides of SimpleFloww:</p>
+        <ul class="list-disc pl-4 space-y-1">
+          <li><strong>User / Client Panel:</strong> The exact interface your business clients get (Live Chat Inbox, Visual Flow Builder, Broadcasts, CRM Leads, AI Bot).</li>
+          <li><strong>Reseller SuperAdmin:</strong> The master dashboard you control as the SaaS owner (Create client accounts, configure white-label branding, set subscription prices).</li>
+        </ul>
+        <p class="text-emerald-400 font-semibold">⚡ All data is simulated dummy data for safe exploration.</p>
+      </div>
+      <button onclick="hideQuickHelpModal()" class="w-full py-2.5 rounded-xl bg-primary text-white font-bold text-xs">
+        Got It, Continue Exploring
+      </button>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="demo-toast" class="hidden fixed bottom-6 right-6 z-50 bg-slate-950 text-white border border-slate-700 px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2.5 text-xs font-semibold animate-bounce">
+    <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i>
+    <span id="demo-toast-text">Action completed successfully</span>
+  </div>
+
+  <!-- SCRIPT LOGIC -->
+  <script>
+    lucide.createIcons();
+
+    // Switch between Main User and Admin views
+    function switchMainPanel(mode) {
+      const userView = document.getElementById('view-user-panel');
+      const adminView = document.getElementById('view-admin-panel');
+      const btnUser = document.getElementById('btn-mode-user');
+      const btnAdmin = document.getElementById('btn-mode-admin');
+
+      if (mode === 'user') {
+        userView.classList.remove('hidden');
+        adminView.classList.add('hidden');
+        btnUser.className = 'flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-lg text-xs font-bold transition-all bg-primary text-white shadow-md shadow-primary/30';
+        btnAdmin.className = 'flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white';
+      } else {
+        userView.classList.add('hidden');
+        adminView.classList.remove('hidden');
+        btnAdmin.className = 'flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-lg text-xs font-bold transition-all bg-primary text-white shadow-md shadow-primary/30';
+        btnUser.className = 'flex items-center gap-2 px-3 sm:px-4 py-1.5 rounded-lg text-xs font-bold transition-all text-slate-400 hover:text-white';
+      }
+      lucide.createIcons();
+    }
+
+    // Switch User Panel Tabs
+    function switchUserTab(tabName) {
+      document.querySelectorAll('.user-content-pane').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.user-nav-item').forEach(el => {
+        el.className = 'user-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 hover:bg-slate-100 hover:text-slate-900';
+      });
+
+      const targetPane = document.getElementById(`user-tab-${tabName}`);
+      const targetNav = document.getElementById(`nav-user-tab-${tabName}`) || document.getElementById(`nav-user-${tabName}`);
+      if (targetPane) targetPane.classList.remove('hidden');
+      if (targetNav) targetNav.className = 'user-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-primary/10 text-primary font-bold';
+      lucide.createIcons();
+    }
+
+    // Switch Admin Panel Tabs
+    function switchAdminTab(tabName) {
+      document.querySelectorAll('.admin-content-pane').forEach(el => el.classList.add('hidden'));
+      document.querySelectorAll('.admin-nav-item').forEach(el => {
+        el.className = 'admin-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-400 hover:bg-slate-900 hover:text-white';
+      });
+
+      const targetPane = document.getElementById(`admin-tab-${tabName}`);
+      const targetNav = document.getElementById(`nav-admin-${tabName}`);
+      if (targetPane) targetPane.classList.remove('hidden');
+      if (targetNav) targetNav.className = 'admin-nav-item w-full flex items-center gap-3 px-3 py-2.5 rounded-xl bg-primary/20 text-primary border border-primary/40 font-bold';
+      lucide.createIcons();
+    }
+
+    // Chat demo interaction
+    function sendDemoMessage() {
+      const input = document.getElementById('demo-chat-input');
+      const val = input.value.trim();
+      if (!val) return;
+
+      const container = document.getElementById('chat-messages-container');
+      const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      // User response bubble
+      const userBubble = document.createElement('div');
+      userBubble.className = 'flex justify-end';
+      userBubble.innerHTML = `
+        <div class="bg-[#d9fdd3] p-3 rounded-2xl rounded-tr-none shadow-xs max-w-sm text-xs text-slate-800 space-y-1">
+          <p>${val}</p>
+          <div class="text-[10px] text-slate-400 text-right flex items-center justify-end gap-1">
+            <span>${timeStr}</span>
+            <i data-lucide="check" class="w-3.5 h-3.5 text-slate-400"></i>
+          </div>
+        </div>
+      `;
+      container.appendChild(userBubble);
+      input.value = '';
+      container.scrollTop = container.scrollHeight;
+      lucide.createIcons();
+
+      // Simulated auto-reply after 800ms
+      setTimeout(() => {
+        const replyBubble = document.createElement('div');
+        replyBubble.className = 'flex justify-start';
+        replyBubble.innerHTML = `
+          <div class="bg-white p-3 rounded-2xl rounded-tl-none shadow-xs max-w-sm text-xs text-slate-800 space-y-1">
+            <p>Thank you! Our automated system registered your request. Would you like to lock this in?</p>
+            <div class="text-[10px] text-slate-400 text-right">${timeStr}</div>
+          </div>
+        `;
+        container.appendChild(replyBubble);
+        container.scrollTop = container.scrollHeight;
+      }, 800);
+    }
+
+    const dummyChatProfiles = [
+      { name: 'Rahul Verma (+91 98234 56789)', initials: 'RV', color: 'emerald' },
+      { name: 'Priya Sharma (D2C Store)', initials: 'PS', color: 'blue' },
+      { name: 'Amit Kumar Realtor', initials: 'AK', color: 'purple' }
+    ];
+
+    function selectChat(idx) {
+      const p = dummyChatProfiles[idx];
+      document.getElementById('chat-header-name').textContent = p.name;
+      document.getElementById('chat-header-avatar').textContent = p.initials;
+    }
+
+    // Modal Helpers
+    function showAddClientModal() { document.getElementById('modal-add-client').classList.remove('hidden'); }
+    function hideAddClientModal() { document.getElementById('modal-add-client').classList.add('hidden'); }
+
+    function showBroadcastModal() { document.getElementById('modal-broadcast').classList.remove('hidden'); }
+    function hideBroadcastModal() { document.getElementById('modal-broadcast').classList.add('hidden'); }
+
+    function showQuickHelpModal() { document.getElementById('modal-help').classList.remove('hidden'); }
+    function hideQuickHelpModal() { document.getElementById('modal-help').classList.add('hidden'); }
+
+    function createNewClientSubmit() {
+      const name = document.getElementById('new-client-name').value.trim();
+      const email = document.getElementById('new-client-email').value.trim();
+      if (!name) return;
+
+      hideAddClientModal();
+      showDemoToast(`Client account "${name}" created! Credentials dispatched.`);
+    }
+
+    function showDemoToast(msg) {
+      const toast = document.getElementById('demo-toast');
+      document.getElementById('demo-toast-text').textContent = msg;
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 3500);
+    }
+  </script>
+</body>
+</html>
