@@ -163,10 +163,10 @@
               <!-- Video State 1: Locked / Pre-Play Cover with Founder Thumbnail -->
               <div id="video-cover" class="absolute inset-0 z-20 flex flex-col items-center justify-between p-3 sm:p-6 text-center cursor-pointer transition-all duration-300 relative" onclick="handleVideoPlayClick()">
                 
-                <!-- Background Image of Founder & Dashboard Preview -->
+                <!-- Background Image of Founder & Video Walkthrough Preview -->
                 <div class="absolute inset-0">
-                  <img src="assets/founder.jpg" alt="Video Walkthrough Cover" class="w-full h-full object-cover object-center opacity-30 blur-[2px]">
-                  <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/80 to-slate-950/70"></div>
+                  <img src="https://img.youtube.com/vi/N60wzT8oboQ/maxresdefault.jpg" alt="Video Walkthrough Cover" class="w-full h-full object-cover object-center opacity-65 group-hover:scale-105 transition-transform duration-700">
+                  <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/60 to-slate-950/40"></div>
                 </div>
 
                 <!-- Badges over video -->
@@ -176,7 +176,7 @@
                       Walkthrough
                     </span>
                     <span class="inline-flex items-center gap-1 px-1.5 py-0.5 sm:px-2 rounded-md text-[9px] sm:text-[11px] bg-slate-800/90 text-slate-300 border border-slate-700">
-                      <i data-lucide="clock" class="w-2.5 h-2.5 sm:w-3 sm:h-3 text-slate-400"></i> 7 Mins
+                      <i data-lucide="clock" class="w-2.5 h-2.5 sm:w-3 sm:h-3 text-slate-400"></i> Full Demo
                     </span>
                   </div>
                   <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-md text-[9px] sm:text-[11px] font-semibold bg-emerald-950/80 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
@@ -204,105 +204,14 @@
                 </div>
               </div>
 
-              <!-- Video State 2: Unlocked Interactive HD Demo Player -->
-              <div id="video-unlocked-player" class="hidden absolute inset-0 z-10 bg-slate-950 flex flex-col">
-                <div class="relative flex-1 bg-gradient-to-br from-slate-950 via-slate-900 to-[#051329] p-4 sm:p-6 flex flex-col justify-between overflow-hidden">
-                  
-                  <!-- Top Bar -->
-                  <div class="flex items-center justify-between border-b border-slate-800 pb-2.5 z-10">
-                    <div class="flex items-center gap-2.5">
-                      <span class="flex h-2.5 w-2.5 relative">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
-                      </span>
-                      <span class="text-xs font-semibold text-white" id="player-title">1. Reseller SuperAdmin & Domain Setup</span>
-                      <span class="text-[9px] px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30">HD 1080p</span>
-                    </div>
-                    <div class="text-[11px] text-slate-400 font-mono" id="player-timestamp">02:15 / 07:45</div>
-                  </div>
-
-                  <!-- Animated Screen Showcase -->
-                  <div class="my-auto py-2 z-10" id="video-screen-content">
-                    
-                    <!-- Slide 1: Reseller Admin -->
-                    <div id="slide-1" class="video-slide space-y-3">
-                      <div class="max-w-md mx-auto bg-slate-900/90 border border-slate-700/80 rounded-xl p-4 shadow-2xl backdrop-blur-md">
-                        <div class="flex items-center justify-between border-b border-slate-800 pb-2 mb-3">
-                          <div class="flex items-center gap-2">
-                            <div class="w-6 h-6 rounded bg-brand-primary text-white flex items-center justify-center font-bold text-xs">YA</div>
-                            <span class="text-xs font-bold text-white">YourAgency.com / Portal</span>
-                          </div>
-                          <span class="text-[10px] text-emerald-400 bg-emerald-950/80 border border-emerald-800 px-2 py-0.5 rounded-full font-mono">100% White-Label</span>
-                        </div>
-                        <div class="grid grid-cols-3 gap-2.5 text-center mb-3">
-                          <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
-                            <div class="text-[9px] text-slate-400">Total Clients</div>
-                            <div class="text-base font-bold text-blue-400">38</div>
-                          </div>
-                          <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
-                            <div class="text-[9px] text-slate-400">Total Msgs</div>
-                            <div class="text-base font-bold text-emerald-400">1.4M</div>
-                          </div>
-                          <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
-                            <div class="text-[9px] text-slate-400">Your Monthly MRR</div>
-                            <div class="text-base font-bold text-purple-400">₹1,95,000</div>
-                          </div>
-                        </div>
-                        <p class="text-[10px] text-slate-400 text-center">Your own custom login URL, custom branding, and 100% margin retention.</p>
-                      </div>
-                    </div>
-
-                    <!-- Slide 2: Flow Builder -->
-                    <div id="slide-2" class="video-slide hidden space-y-3">
-                      <div class="max-w-md mx-auto bg-slate-900/90 border border-slate-700/80 rounded-xl p-4 shadow-2xl text-center">
-                        <div class="text-xs font-bold text-blue-400 mb-2">Visual No-Code Chatbot Workflow</div>
-                        <div class="flex items-center justify-center gap-2 py-2 text-xs">
-                          <span class="px-2 py-1 rounded bg-slate-950 border border-slate-800 text-white">Customer Message</span>
-                          <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-blue-400"></i>
-                          <span class="px-2 py-1 rounded bg-blue-950 border border-blue-800 text-blue-300">ChatGPT Agent</span>
-                          <i data-lucide="arrow-right" class="w-3.5 h-3.5 text-blue-400"></i>
-                          <span class="px-2 py-1 rounded bg-emerald-950 border border-emerald-800 text-emerald-300">Closed Deal</span>
-                        </div>
-                        <p class="text-[10px] text-slate-400 mt-2">Zero coding required. Pre-built templates for real estate, clinics, D2C, and education.</p>
-                      </div>
-                    </div>
-
-                    <!-- Slide 3: Broadcast -->
-                    <div id="slide-3" class="video-slide hidden space-y-3">
-                      <div class="max-w-md mx-auto bg-slate-900/90 border border-slate-700/80 rounded-xl p-4 shadow-2xl text-xs space-y-2">
-                        <div class="flex justify-between font-bold text-white">
-                          <span>Broadcast: Flash Sale (25,000 contacts)</span>
-                          <span class="text-emerald-400">99.4% Delivery</span>
-                        </div>
-                        <div class="w-full bg-slate-800 h-1.5 rounded-full overflow-hidden">
-                          <div class="bg-brand-primary h-full w-[99%]"></div>
-                        </div>
-                        <div class="flex justify-between text-[10px] text-slate-400 font-mono">
-                          <span>Delivered: 24,850</span>
-                          <span>Read: 22,810 (91.8%)</span>
-                          <span>Clicked: 38.2%</span>
-                        </div>
-                      </div>
-                    </div>
-
-                  </div>
-
-                  <!-- Player Navigation Controls -->
-                  <div class="bg-slate-950/90 border border-slate-800 p-2 rounded-xl flex items-center justify-between gap-2 z-10">
-                    <div class="flex items-center gap-1.5">
-                      <button onclick="toggleVideoPlayback()" class="p-1 rounded bg-brand-primary text-white">
-                        <i data-lucide="pause" id="btn-play-pause-icon" class="w-3.5 h-3.5"></i>
-                      </button>
-                      <button onclick="switchVideoSlide(0)" class="slide-nav-btn text-[10px] px-2 py-1 rounded bg-slate-800 text-white font-bold border border-blue-500/40">1. White-Label</button>
-                      <button onclick="switchVideoSlide(1)" class="slide-nav-btn text-[10px] px-2 py-1 rounded bg-slate-800 text-slate-400">2. Bot Builder</button>
-                      <button onclick="switchVideoSlide(2)" class="slide-nav-btn text-[10px] px-2 py-1 rounded bg-slate-800 text-slate-400">3. Broadcast</button>
-                    </div>
-                    <button onclick="scrollToPricing()" class="px-2.5 py-1 rounded bg-gradient-to-r from-amber-500 to-amber-600 text-slate-950 text-[10px] font-black flex items-center gap-1">
-                      <span>Get Reseller Pricing</span>
-                    </button>
-                  </div>
-
-                </div>
+              <!-- Video State 2: Unlocked Real YouTube Player -->
+              <div id="video-unlocked-player" class="hidden absolute inset-0 z-30 bg-black">
+                <iframe id="youtube-player" class="w-full h-full border-0" 
+                  src="" 
+                  title="SimpleFloww White-Label Walkthrough" 
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                  allowfullscreen>
+                </iframe>
               </div>
 
             </div>
@@ -1292,64 +1201,17 @@
       showToast('Video Unlocked! Starting Platform Tour...');
     }
 
+    const YOUTUBE_VIDEO_ID = 'N60wzT8oboQ';
+
     function startVideoPlayer() {
       document.getElementById('video-cover').classList.add('hidden');
-      document.getElementById('video-unlocked-player').classList.remove('hidden');
-      switchVideoSlide(0);
-      startSlideCycle();
-    }
+      const playerContainer = document.getElementById('video-unlocked-player');
+      playerContainer.classList.remove('hidden');
 
-    const slideTitles = [
-      '1. Reseller SuperAdmin & Domain Setup',
-      '2. Visual No-Code Chatbot Workflow',
-      '3. High-Throughput Bulk Broadcasting'
-    ];
-
-    const slideTimes = ['01:45 / 07:45', '03:30 / 07:45', '06:15 / 07:45'];
-
-    function switchVideoSlide(index) {
-      currentSlide = index;
-      const slides = document.querySelectorAll('.video-slide');
-      slides.forEach((s, idx) => {
-        if (idx === index) {
-          s.classList.remove('hidden');
-        } else {
-          s.classList.add('hidden');
-        }
-      });
-
-      document.getElementById('player-title').textContent = slideTitles[index];
-      document.getElementById('player-timestamp').textContent = slideTimes[index];
-
-      const buttons = document.querySelectorAll('.slide-nav-btn');
-      buttons.forEach((b, idx) => {
-        if (idx === index) {
-          b.className = 'slide-nav-btn text-[10px] px-2 py-1 rounded bg-brand-primary text-white font-bold';
-        } else {
-          b.className = 'slide-nav-btn text-[10px] px-2 py-1 rounded bg-slate-800 text-slate-400';
-        }
-      });
-    }
-
-    function startSlideCycle() {
-      if (videoInterval) clearInterval(videoInterval);
-      videoInterval = setInterval(() => {
-        if (isPlaying) {
-          let next = (currentSlide + 1) % 3;
-          switchVideoSlide(next);
-        }
-      }, 5000);
-    }
-
-    function toggleVideoPlayback() {
-      isPlaying = !isPlaying;
-      const icon = document.getElementById('btn-play-pause-icon');
-      if (isPlaying) {
-        icon.setAttribute('data-lucide', 'pause');
-      } else {
-        icon.setAttribute('data-lucide', 'play');
+      const iframe = document.getElementById('youtube-player');
+      if (iframe && (!iframe.src || !iframe.src.includes(YOUTUBE_VIDEO_ID))) {
+        iframe.src = `https://www.youtube-nocookie.com/embed/${YOUTUBE_VIDEO_ID}?autoplay=1&rel=0&modestbranding=1&playsinline=1`;
       }
-      lucide.createIcons();
     }
 
     function scrollToPricing() {
