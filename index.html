@@ -1213,6 +1213,23 @@
       }
     }
 
+    // SimpleFunnel Lead Capture Webhook
+    const WEBHOOK_URL = 'https://flow.simplefunnel.in/api/v2/webhook/flows/6acb2af52802eb806c0563ab';
+
+    async function sendLeadToWebhook(leadData) {
+      try {
+        await fetch(WEBHOOK_URL, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(leadData)
+        });
+      } catch (err) {
+        console.warn('Webhook delivery notice:', err);
+      }
+    }
+
     function saveLead(leadData) {
       const leads = getStoredLeads();
       const newLead = {
@@ -1222,6 +1239,10 @@
       };
       leads.unshift(newLead);
       localStorage.setItem(LEADS_STORAGE_KEY, JSON.stringify(leads));
+      
+      // Real-time dispatch to SimpleFunnel Webhook
+      sendLeadToWebhook(newLead);
+      
       return newLead;
     }
 
