@@ -1139,12 +1139,37 @@
       }
     }
 
+    // Format phone number to standard Indian international E.164 (+91XXXXXXXXXX)
+    function formatIndianPhoneNumber(rawPhone) {
+      if (!rawPhone) return '';
+      // Remove all non-digit characters
+      let digits = rawPhone.toString().replace(/\D/g, '');
+      
+      // If starts with 91 and has 12 digits, strip the leading 91
+      if (digits.length === 12 && digits.startsWith('91')) {
+        digits = digits.substring(2);
+      }
+      // If starts with 0 and has 11 digits, strip the leading 0
+      else if (digits.length === 11 && digits.startsWith('0')) {
+        digits = digits.substring(1);
+      }
+      // If user typed more digits (e.g. +91 09876543210), extract the last 10 digits
+      else if (digits.length > 10) {
+        digits = digits.slice(-10);
+      }
+
+      // Return clean format with +91 prefix
+      return '+91' + digits;
+    }
+
     function saveLead(leadData) {
       const leads = getStoredLeads();
+      const formattedPhone = formatIndianPhoneNumber(leadData.phone);
       const newLead = {
         id: 'L-' + Date.now(),
         timestamp: new Date().toISOString(),
-        ...leadData
+        ...leadData,
+        phone: formattedPhone
       };
       leads.unshift(newLead);
       localStorage.setItem(LEADS_STORAGE_KEY, JSON.stringify(leads));
@@ -1157,9 +1182,6 @@
 
     // Video Gate Mechanism
     let isVideoUnlocked = localStorage.getItem(VIDEO_UNLOCKED_KEY) === 'true';
-    let currentSlide = 0;
-    let videoInterval = null;
-    let isPlaying = true;
 
     function handleVideoPlayClick() {
       if (isVideoUnlocked) {
@@ -1180,15 +1202,17 @@
     function handleVideoGateSubmit(e) {
       e.preventDefault();
       const name = document.getElementById('gate-name').value.trim();
-      const phone = document.getElementById('gate-phone').value.trim();
+      const rawPhone = document.getElementById('gate-phone').value.trim();
       const email = document.getElementById('gate-email').value.trim();
 
-      if (!name || !phone) return;
+      if (!name || !rawPhone) return;
+
+      const formattedPhone = formatIndianPhoneNumber(rawPhone);
 
       saveLead({
         type: 'Video Gate Unlock',
         name,
-        phone,
+        phone: formattedPhone,
         email: email || 'Not provided',
         source: 'Founder Video Gate'
       });
@@ -1234,21 +1258,22 @@
     function handleResellerFormSubmit(e) {
       e.preventDefault();
       const name = document.getElementById('form-name').value.trim();
-      const phone = document.getElementById('form-phone').value.trim();
+      const rawPhone = document.getElementById('form-phone').value.trim();
       const email = document.getElementById('form-email').value.trim();
       const agency = document.getElementById('form-agency').value.trim();
       const type = document.getElementById('form-type').value;
       const clients = document.getElementById('form-clients').value;
 
-      if (!name || !phone || !email) return;
+      if (!name || !rawPhone || !email) return;
 
+      const formattedPhone = formatIndianPhoneNumber(rawPhone);
       lastSubmittedName = name;
-      lastSubmittedPhone = phone;
+      lastSubmittedPhone = formattedPhone;
 
       saveLead({
         type: 'Full Reseller Pricing Application',
         name,
-        phone,
+        phone: formattedPhone,
         email,
         agency: agency || 'Individual Agency',
         businessType: type,
