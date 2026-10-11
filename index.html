@@ -1038,38 +1038,48 @@
 
   <!-- ================= MODAL 2: SUCCESS / CONFIRMATION MODAL ================= -->
   <div id="success-modal" class="hidden fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-slate-900/60 backdrop-blur-md">
-    <div class="relative w-full max-w-md bg-white border border-slate-200 rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-2xl text-center max-h-[92vh] overflow-y-auto animate-in zoom-in duration-200">
+    <div class="relative w-full max-w-md bg-white border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-2xl text-center max-h-[92vh] overflow-y-auto animate-in zoom-in duration-200">
       
-      <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto mb-4 border border-emerald-200">
-        <i data-lucide="check-circle" class="w-7 h-7 sm:w-8 sm:h-8"></i>
+      <!-- Close Button -->
+      <button onclick="closeSuccessModal()" class="absolute top-4 right-4 p-2 rounded-full text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition">
+        <i data-lucide="x" class="w-4 h-4"></i>
+      </button>
+
+      <!-- Emerald Check Icon -->
+      <div class="w-16 h-16 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-4 border border-emerald-200 shadow-sm">
+        <i data-lucide="check" class="w-8 h-8 stroke-[2.5]"></i>
       </div>
 
-      <h3 class="text-xl sm:text-2xl font-black text-slate-900">Application Received!</h3>
-      <p class="text-xs sm:text-sm text-slate-600 mt-2" id="success-modal-message">
-        Thank you! Our Partnership Manager will send the White-Label Margin Sheet & Wholesale License Kit to your WhatsApp shortly.
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 uppercase tracking-widest mb-2">
+        Confirmed
+      </span>
+
+      <h3 class="text-2xl font-black text-slate-900 tracking-tight">Application Received!</h3>
+      
+      <p class="text-xs sm:text-sm text-slate-600 mt-2 leading-relaxed" id="success-modal-message">
+        Thank you! We have received your reseller application.
       </p>
 
-      <div class="my-5 p-3.5 sm:p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 space-y-2">
-        <div class="flex justify-between">
-          <span>Target Response Time:</span>
-          <span class="text-brand-primary font-bold">Under 15 Minutes</span>
+      <!-- Response Time & Delivery Details Box -->
+      <div class="my-6 p-4 rounded-2xl bg-slate-50 border border-slate-200 text-xs space-y-2.5 text-left">
+        <div class="flex items-center justify-between">
+          <span class="text-slate-500 font-medium">Response Time:</span>
+          <span class="inline-flex items-center gap-1 font-bold text-brand-primary bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-200">
+            <i data-lucide="clock" class="w-3.5 h-3.5"></i> Under 15 Minutes
+          </span>
         </div>
-        <div class="flex justify-between">
-          <span>Priority Delivery:</span>
-          <span class="text-emerald-600 font-bold">Direct to WhatsApp</span>
+        <div class="flex items-center justify-between">
+          <span class="text-slate-500 font-medium">Commercial Deck Delivery:</span>
+          <span class="inline-flex items-center gap-1 font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200">
+            <i data-lucide="send" class="w-3.5 h-3.5"></i> WhatsApp & Email
+          </span>
         </div>
       </div>
 
-      <div class="space-y-3">
-        <button onclick="triggerDirectWhatsAppInquiry()" class="w-full py-3 rounded-xl bg-whatsapp hover:bg-[#20bd5a] text-white font-bold text-sm flex items-center justify-center gap-2 shadow-lg shadow-whatsapp/30">
-          <i data-lucide="message-circle" class="w-4 h-4"></i>
-          <span>Chat With Us On WhatsApp Now</span>
-        </button>
-
-        <button onclick="closeSuccessModal()" class="w-full py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold">
-          Close & Continue Browsing
-        </button>
-      </div>
+      <!-- Action Button -->
+      <button onclick="closeSuccessModal()" class="w-full py-3.5 rounded-xl bg-brand-primary hover:bg-blue-600 text-white font-extrabold text-sm tracking-wide shadow-lg shadow-blue-500/25 transition-all hover:scale-[1.01] active:scale-[0.99]">
+        Got It, Thank You
+      </button>
 
     </div>
   </div>
@@ -1294,21 +1304,15 @@
       document.getElementById('reseller-lead-form').reset();
 
       document.getElementById('success-modal-message').innerHTML = `
-        Thank you <strong>${name}</strong>! We have registered your application for <strong>${agency || 'your agency'}</strong>. 
-        Our WhatsApp Partnership Team is preparing your Wholesale Margin Deck.
+        Thank you <strong>${name}</strong>! We have registered your application for <strong>${agency || 'your business'}</strong>. 
+        Our Partnership Team is reviewing your submission and preparing your confidential wholesale kit.
       `;
       document.getElementById('success-modal').classList.remove('hidden');
+      lucide.createIcons();
     }
 
     function closeSuccessModal() {
       document.getElementById('success-modal').classList.add('hidden');
-    }
-
-    function triggerDirectWhatsAppInquiry() {
-      const targetPhone = "919053165771"; // Official contact from SimpleFloww
-      const text = encodeURIComponent(`Hi! I just applied for the SimpleFloww White-Label Reseller Program on your website. My name is ${lastSubmittedName || 'Partner'} (${lastSubmittedPhone}). Please share the wholesale pricing & margin deck.`);
-      window.open(`https://wa.me/${targetPhone}?text=${text}`, '_blank');
-      closeSuccessModal();
     }
 
     function openWhatsAppDirectChat() {
